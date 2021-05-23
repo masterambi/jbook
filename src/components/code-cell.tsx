@@ -4,7 +4,7 @@ import Preview from './preview';
 import bundle from '../bundler';
 import Resizable from './resizable';
 import { Cell } from '../state';
-import { useActions } from '../hooks/use-actions'
+import { useActions } from '../hooks/use-actions';
 
 interface CodeCellProps {
 	cell: Cell;
@@ -29,9 +29,18 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 
 	return (
 		<Resizable direction="vertical">
-			<div style={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
+			<div
+				style={{
+					height: 'calc(100% - 10px)',
+					display: 'flex',
+					flexDirection: 'row'
+				}}
+			>
 				<Resizable direction="horizontal">
-					<CodeEditor initialValue={cell.content} onChange={value => updateCell(cell.id, value)} />
+					<CodeEditor
+						initialValue={cell.content}
+						onChange={value => updateCell(cell.id, value)}
+					/>
 				</Resizable>
 				<Preview code={code} err={err} />
 			</div>
