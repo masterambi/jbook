@@ -1,10 +1,11 @@
+import './code-cell.scss';
 import { useEffect } from 'react';
 import CodeEditor from './code-editor';
 import Preview from './preview';
 import Resizable from './resizable';
 import { Cell } from '../state';
 import { useActions } from '../hooks/use-actions';
-import {useTypedSelector} from '../hooks/use-typed-selector';
+import { useTypedSelector } from '../hooks/use-typed-selector';
 
 interface CodeCellProps {
 	cell: Cell;
@@ -12,17 +13,17 @@ interface CodeCellProps {
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 	const { updateCell, createBundle } = useActions();
-	const bundles = useTypedSelector((state) => state.bundles);
+	const bundles = useTypedSelector(state => state.bundles);
 	const bundle = bundles[cell.id];
 
 	useEffect(() => {
-		if(!bundle) {
+		if (!bundle) {
 			createBundle(cell.id, cell.content);
 			return;
 		}
 
 		const timer = setTimeout(async () => {
-			createBundle(cell.id, cell.content)
+			createBundle(cell.id, cell.content);
 		}, 750);
 
 		return () => {
@@ -41,12 +42,19 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 				}}
 			>
 				<Resizable direction="horizontal">
-					<CodeEditor
-						initialValue={cell.content}
-						onChange={value => updateCell(cell.id, value)}
-					/>
+					<CodeEditor initialValue={cell.content} onChange={value => updateCell(cell.id, value)} />
 				</Resizable>
-				{bundle && <Preview code={bundle.code} err={bundle.err} />}
+				<div className="progress-wrapper">
+					{!bundle || bundle.loading ? (
+						<div className="progress-cover">
+							<progress className="progress is-small is-primary" max="100">
+								Loading
+							</progress>
+						</div>
+					) : (
+						<Preview code={bundle.code} err={bundle.err} />
+					)}
+				</div>
 			</div>
 		</Resizable>
 	);
