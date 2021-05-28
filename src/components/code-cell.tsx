@@ -6,6 +6,7 @@ import Resizable from './resizable';
 import { Cell } from '../state';
 import { useActions } from '../hooks/use-actions';
 import { useTypedSelector } from '../hooks/use-typed-selector';
+import { useCumulativeCode } from '../hooks/use-cumulative-code';
 
 interface CodeCellProps {
 	cell: Cell;
@@ -15,22 +16,25 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 	const { updateCell, createBundle } = useActions();
 	const bundles = useTypedSelector(state => state.bundles);
 	const bundle = bundles[cell.id];
+	const cumulativeCode = useCumulativeCode(cell.id);
+
+	console.log(cumulativeCode);
 
 	useEffect(() => {
 		if (!bundle) {
-			createBundle(cell.id, cell.content);
+			createBundle(cell.id, cumulativeCode);
 			return;
 		}
 
 		const timer = setTimeout(async () => {
-			createBundle(cell.id, cell.content);
+			createBundle(cell.id, cumulativeCode);
 		}, 750);
 
 		return () => {
 			clearTimeout(timer);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cell.content, cell.id, createBundle]);
+	}, [cumulativeCode, cell.id, createBundle]);
 
 	return (
 		<Resizable direction="vertical">
